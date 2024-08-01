@@ -4,9 +4,10 @@ import chartUp from "../../assest/chart-up.svg";
 import chartDown from "../../assest/chart-down.svg";
 
 import styles from "./TableCoin.module.css";
+import { marketChart } from "../../services/cryptoAPI";
 
-function TableCoin({ coins, isLoading, currency }) {
-  console.log(coins);
+function TableCoin({ coins, isLoading, currency, setChart }) {
+  // console.log(coins);
   return (
     <div className={styles.container}>
       {isLoading ? (
@@ -25,7 +26,12 @@ function TableCoin({ coins, isLoading, currency }) {
           </thead>
           <tbody>
             {coins.map((coin) => (
-              <TableRow coin={coin} key={coin.id} currency={currency} />
+              <TableRow
+                coin={coin}
+                key={coin.id}
+                currency={currency}
+                setChart={setChart}
+              />
             ))}
           </tbody>
         </table>
@@ -36,20 +42,29 @@ function TableCoin({ coins, isLoading, currency }) {
 
 export default TableCoin;
 
-const TableRow = ({
-  coin: {
+const TableRow = ({ coin, currency, setChart }) => {
+  const {
+    id,
     image,
     name,
     symbol,
     current_price,
     price_change_percentage_24h: price_change,
-  },
-  currency,
-}) => {
+  } = coin;
+  const showHandler = async () => {
+    try {
+      const res = await fetch(marketChart(id));
+      const json = await res.json();
+      // console.log(json);
+      setChart({ ...json, coin: coin });
+    } catch (error) {
+      setChart(null);
+    }
+  };
   return (
     <tr>
       <td>
-        <div className={styles.symbol}>
+        <div className={styles.symbol} onClick={showHandler}>
           <img src={image} alt={name} />
           <span>{symbol.toUpperCase()}</span>
         </div>

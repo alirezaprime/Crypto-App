@@ -1,2 +1,2 @@
 # Crypto-App
-this project about crypto website 
+to this project i try to use rechart library for chrt & axios & SPA 
